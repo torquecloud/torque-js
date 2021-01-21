@@ -20,11 +20,16 @@ export function isUnknownTorqueUser(user: BaseTorqueUser): user is UnknownTorque
 }
 
 export type UserMe_ApiResponseData = {
+  auth: {
+    auth_token: string
+    expires_on_iso: string
+  }
   user: {
     id: string,
     email: string
     given_name: string
     family_name: string
+    customer_specific_data: object
   }
 }
 
@@ -38,6 +43,7 @@ export class AuthenticatedTorqueUser implements BaseTorqueUser {
   readonly email: string
   readonly givenName: string
   readonly familyName: string
+  readonly customerSpecificData: object
 
   constructor(
     authContext: AuthContext,
@@ -45,12 +51,14 @@ export class AuthenticatedTorqueUser implements BaseTorqueUser {
     email: string,
     givenName: string,
     familyName: string,
+    customer_specific_data: object,
   ) {
     this.auth = authContext
     this.id = id
     this.email = email
     this.givenName = givenName
     this.familyName = familyName
+    this.customerSpecificData = customer_specific_data
   }
 }
 

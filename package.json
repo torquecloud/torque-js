@@ -1,6 +1,6 @@
 {
   "name": "@torquecloud/torque-js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -17,9 +17,12 @@
     "url": "git+ssh://git@github.com/torquecloud/torque-js.git"
   },
   "keywords": [
-    "torque"
+    "Torque",
+    "authentication",
+    "typescript",
+    "javascript"
   ],
-  "author": "Torque, Inc.",
+  "author": "Torque, Inc. (http://torque.cloud)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/torquecloud/torque-js/issues"
