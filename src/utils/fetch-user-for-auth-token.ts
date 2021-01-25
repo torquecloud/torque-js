@@ -1,6 +1,6 @@
 import { AuthenticatedTorqueUser, UnknownTorqueUser, TorqueUser, UserMe_ApiResponseData } from '../torque-user/torque-user'
 import buildAxiosInstance from '../axios/build-axios-instance'
-import { TORQUE_API_URL } from '../package-config'
+import packageConfig from '../config/package-config'
 import { makeAuthHeader } from '../axios/auth-request-interceptor'
 import { AxiosOptions } from '../axios/axios-options'
 import { AuthContext } from '../torque-user/auth-context'
@@ -13,7 +13,7 @@ export function fetchUserForAuthToken(
   const authHeader = makeAuthHeader(authToken)
   return axiosInstanceWithoutAuthHeader
     .get(
-      `${TORQUE_API_URL}/user/auth`,
+      `${packageConfig.TORQUE_API_URL}/user/me/auth`,
       {
         headers: {
           [authHeader.name]: authHeader.value,

@@ -13,5 +13,6 @@ export {
   Torque
 } from './torque/torque'
 export {
+  TorqueInitOptions,
   initTorque
 } from './torque/init-torque'

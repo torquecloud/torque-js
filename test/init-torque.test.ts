@@ -33,7 +33,10 @@ test('initTorque', async () => {
     expiresOnIso: "2021-01-09T23:40:00+00:00"
   }))
 
-  const torque = await initTorque('pk_xyz')
+  const torque = await initTorque({
+    apiPublicKey: 'pk_test_xyz',
+    authCallbackUrl: 'http://example.com'
+  })
   const user = await torque.retrieveTorqueUser();
   expect(torque).toBeInstanceOf(Torque);
 });

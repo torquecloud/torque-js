@@ -1,6 +1,6 @@
 import { TorqueError, TorqueErrorType } from './torque-error'
 import { Torque } from './torque'
-import { TORQUE_API_URL } from '../package-config'
+import packageConfig from '../config/package-config'
 import {
   CustomerConfig
 } from '../customer/customer-config'
@@ -13,13 +13,18 @@ import {
   customerConfigFromTorqueCustomerApi_responseValidationSchema,
 } from '../customer/customer-config-from-torque-customer-api'
 
+
 const TORQUE_PUBLIC_KEY_PREFIX = 'pk_';
-const CUSTOMER_CONFIGURATION_TORQUE_API_URL = `${TORQUE_API_URL}/configuration`;
+const CUSTOMER_CONFIGURATION_TORQUE_API_URL = `${packageConfig.TORQUE_API_URL}/configuration`;
+
 
 export interface TorqueInitOptions {
   apiPublicKey: string,
-  authCallbackUrl: string
+  authCallbackUrl: string,
+  fallbackUrl: string
 }
+
+
 /**
  * Validates provided initializationOptions, gets your configuration from Torque API,
  * and creates new Torque instance.
@@ -32,22 +37,46 @@ export function initTorque(
 ): Promise<Torque> {
   const {
     apiPublicKey,
+    fallbackUrl,
     authCallbackUrl
   } = torqueInitOptions
+
+  if(!apiPublicKey)
+    return Promise.reject(
+      new TorqueError(
+        TorqueErrorType.invalid_config,
+        `Torque API public key not defined.`
+      )
+    )
+
+  if(!fallbackUrl)
+    return Promise.reject(
+      new TorqueError(
+        TorqueErrorType.invalid_config,
+        `'fallbackUrl' is not defined.`
+      )
+    )
+
+  if(!authCallbackUrl)
+    return Promise.reject(
+      new TorqueError(
+        TorqueErrorType.invalid_config,
+        `'authCallbackUrl' is not defined.`
+      )
+    )
 
   const isProvidedKeyPublicApiKey =
     apiPublicKey.substring(0, TORQUE_PUBLIC_KEY_PREFIX.length)
     === TORQUE_PUBLIC_KEY_PREFIX;
+  if(!isProvidedKeyPublicApiKey)
+    return Promise.reject(
+      new TorqueError(
+        TorqueErrorType.invalid_config,
+        `Invalid public key. All public keys start with '${TORQUE_PUBLIC_KEY_PREFIX}'.`
+      )
+    )
 
   return new Promise<Torque>(async (resolve, reject) => {
-    if(!isProvidedKeyPublicApiKey)
-      reject(
-        new TorqueError(
-          TorqueErrorType.invalid_config,
-          `Invalid public key. All public keys start with '${TORQUE_PUBLIC_KEY_PREFIX}'.`
-        )
-      )
-
     try {
       const axiosInstance = buildAxiosInstance({
         apiPublicKey
@@ -63,9 +92,10 @@ export function initTorque(
       }
 
       const customerConfig: CustomerConfig = {
-        ...customerConfigFromTorqueCustomerApi,
         apiPublicKey,
-        authCallbackUrl
+        customerHandle: customerConfigFromTorqueCustomerApi.customerHandle,
+        fallbackUrl: fallbackUrl,
+        authCallbackUrl: authCallbackUrl
       }
 
       resolve(new Torque(customerConfig));
