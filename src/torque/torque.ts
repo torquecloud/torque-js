@@ -115,14 +115,15 @@ export class Torque {
   }
 
   logout(): Promise<UnknownTorqueUser> {
-    AuthContextStorage.clear()
     return this.axiosInstance
       .post(`${packageConfig.TORQUE_API_URL}/user/me/logout`)
       .then(
         function onFulfilled() {
+          AuthContextStorage.clear()
           return UnknownTorqueUser.Instance
         },
         function onRejected() {
+          AuthContextStorage.clear()
           return UnknownTorqueUser.Instance
         },
       )
