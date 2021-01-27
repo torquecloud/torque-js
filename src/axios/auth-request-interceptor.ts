@@ -9,7 +9,6 @@ export function makeAuthHeader(authToken: string) {
   }
 }
 
-
 export function buildAuthRequestInterceptor() {
   return function mainAxiosRequestInterceptor(
     request: AxiosRequestConfig,
