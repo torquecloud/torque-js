@@ -10,16 +10,10 @@ import {
 import { AuthContextStorage } from '../torque-user/auth-context-storage'
 import buildAxiosInstance from '../axios/build-axios-instance'
 import { AxiosInstance } from 'axios'
-import { AuthContext } from '../torque-user/auth-context'
 import { buildAuthRequestInterceptor } from '../axios/auth-request-interceptor'
 import { fetchUserForAuthToken } from '../utils/fetch-user-for-auth-token'
 import { AxiosOptions } from '../axios/axios-options'
-
-export {
-  BaseTorqueUser, UnknownTorqueUser, isUnknownTorqueUser, AuthenticatedTorqueUser, isAuthenticatedTorqueUser,
-} from '../torque-user/torque-user'
-export { TorqueUserPersona } from '../torque-user/torque-user-persona'
-export { AuthContext } from '../torque-user/auth-context'
+import { TorqueError, TorqueErrorType } from './torque-error'
 
 
 /**
@@ -57,7 +51,7 @@ export class Torque {
   }
 
   private makeUrlQueryParamWithBaseParams(
-    additionalQueryParamsMap: Map<string, string> = new Map()
+    additionalQueryParamsMap: Map<string, string> = new Map(),
   ): string {
     const baseQueryParamsMap = new Map()
     if (this.authCallbackUrl)
@@ -70,14 +64,14 @@ export class Torque {
 
     const doesAdditionalQueryParamsContainBaseParams =
       [...baseQueryParamsMap.keys()]
-      .some(paramName => additionalQueryParamsMap.has(paramName))
-    if(doesAdditionalQueryParamsContainBaseParams) {
+        .some(paramName => additionalQueryParamsMap.has(paramName))
+    if (doesAdditionalQueryParamsContainBaseParams) {
       console.warn(
         `'additionalQueryParamsMap' contains one or more base params. These elements from 'additionalQueryParamsMap' will be ignored and base params will be used instead.`)
     }
     const finalQueryParamsMap = new Map([
       ...additionalQueryParamsMap,
-      ...baseQueryParamsMap
+      ...baseQueryParamsMap,
     ])
 
     const queryString =
@@ -94,8 +88,18 @@ export class Torque {
     return targetUrl
   }
 
-  startLoginSegment() {
-    window.location.href = this.makeLoginSegmentUrl()
+  startLoginSegment(): Promise<never | { error: TorqueError }> {
+    return new Promise<{ error: TorqueError }>(() => {
+      window.location.href = this.makeLoginSegmentUrl()
+    }).catch(reason => {
+      return {
+        error: {
+          type: TorqueErrorType.unknown_error,
+          message: `Unknown error happened while starting login user flow segment.`,
+          rawReason: reason,
+        },
+      }
+    })
   }
 
   private makeRegistrationSegmentUrl(priceId: string): string {
@@ -110,35 +114,52 @@ export class Torque {
     return targetUrl
   }
 
-  startRegistrationSegment(priceId: string) {
-    window.location.href = this.makeRegistrationSegmentUrl(priceId)
+  startRegistrationSegment(
+    priceId: string,
+  ): Promise<never | { error: TorqueError }> {
+    return new Promise<{ error: TorqueError }>(() => {
+      window.location.href = this.makeRegistrationSegmentUrl(priceId)
+    }).catch(reason => {
+      return {
+        error: {
+          type: TorqueErrorType.unknown_error,
+          message: `Unknown error happened while starting registration user flow segment.`,
+          rawReason: reason,
+        },
+      }
+    })
   }
 
-  logout(): Promise<UnknownTorqueUser> {
+  logout(): Promise<{ error?: TorqueError }> {
     return this.axiosInstance
       .post(`${packageConfig.TORQUE_API_URL}/user/me/logout`)
-      .then(
-        function onFulfilled() {
+      .then(() => {
           AuthContextStorage.clear()
-          return UnknownTorqueUser.Instance
+          return {}
         },
-        function onRejected() {
-          AuthContextStorage.clear()
-          return UnknownTorqueUser.Instance
-        },
-      )
+      ).catch(reason => {
+        return {
+          error: {
+            type: TorqueErrorType.unknown_error,
+            message: `Unknown error happened while logging out.`,
+            rawReason: reason,
+          },
+        }
+      })
   }
 
-  retrieveTorqueUser(): Promise<TorqueUser> {
+  retrieveTorqueUser(): Promise<{ user?: TorqueUser, error?: TorqueError }> {
     const authContext = AuthContextStorage.load()
     if (!authContext)
-      return Promise.resolve(UnknownTorqueUser.Instance)
+      return Promise.resolve({
+        user: UnknownTorqueUser.Instance,
+      })
 
     return this.axiosInstance
       .get(`${packageConfig.TORQUE_API_URL}/user/me/auth`)
       .then(response => {
         const data: UserMe_ApiResponseData = response.data
-        return new AuthenticatedTorqueUser(
+        const authenticatedTorqueUser = new AuthenticatedTorqueUser(
           authContext,
           data.user.id,
           data.user.email,
@@ -146,27 +167,41 @@ export class Torque {
           data.user.family_name,
           data.user.customer_specific_data,
         )
+        return {
+          user: authenticatedTorqueUser,
+        }
       })
-      .catch(error => {
-        return this.logout()
+      .catch(reason => {
+        return {
+          error: {
+            type: TorqueErrorType.unknown_error,
+            message: `Unknown error happened while retrieving user.`,
+            rawReason: reason,
+          },
+        }
       })
   }
 
   handleAuthenticationCallback(
     authToken: string,
-  ): Promise<{ user: TorqueUser }> {
+  ): Promise<{ user?: TorqueUser, error?: TorqueError }> {
     return fetchUserForAuthToken(this.axiosOptions, authToken)
-      .then(
-        user => {
+      .then(user => {
           if (isAuthenticatedTorqueUser(user))
             AuthContextStorage.store(user.auth)
           return {
             user,
           }
         },
-        reason => ({
-          user: UnknownTorqueUser.Instance,
-        }),
       )
+      .catch(reason => {
+        return {
+          error: {
+            type: TorqueErrorType.unknown_error,
+            message: `Unknown error happened while handling authentication callback.`,
+            rawReason: reason,
+          },
+        }
+      })
   }
 }
