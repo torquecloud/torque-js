@@ -130,7 +130,7 @@ export function initTorque(
         }
       }
       return {
-        reason: {
+        error: {
           type: TorqueErrorType.unknown_error,
           message: `Unknown error happened while initializing Torque.`,
           rawReason: reason,

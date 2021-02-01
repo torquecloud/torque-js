@@ -14,6 +14,7 @@ import { buildAuthRequestInterceptor } from '../axios/auth-request-interceptor'
 import { fetchUserForAuthToken } from '../utils/fetch-user-for-auth-token'
 import { AxiosOptions } from '../axios/axios-options'
 import { TorqueError, TorqueErrorType } from './torque-error'
+import { Price } from '../price/price'
 
 
 /**
@@ -169,6 +170,41 @@ export class Torque {
         )
         return {
           user: authenticatedTorqueUser,
+        }
+      })
+      .catch(reason => {
+        return {
+          error: {
+            type: TorqueErrorType.unknown_error,
+            message: `Unknown error happened while retrieving user.`,
+            rawReason: reason,
+          },
+        }
+      })
+  }
+
+  retrievePriceByHandle(priceHandle: string): Promise<{ price?: Price, error?: TorqueError }> {
+    if(typeof priceHandle !== 'string')
+      return Promise.resolve({
+        error: {
+          type: TorqueErrorType.invalid_parameter,
+          message: `'priceHandle' has to be of type string.`
+        }
+      })
+    if(!priceHandle)
+      return Promise.resolve({
+        error: {
+          type: TorqueErrorType.invalid_parameter,
+          message: `'priceHandle' cannot be empty string.`
+        }
+      })
+
+    return this.axiosInstance
+      .get(`${packageConfig.TORQUE_API_URL}/price/by-handle/${priceHandle}`)
+      .then(response => {
+        const price: Price = response.data
+        return {
+          price
         }
       })
       .catch(reason => {
