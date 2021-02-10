@@ -1,12 +1,9 @@
 import { TorqueError, TorqueErrorType } from './torque-error'
 import { Torque } from './torque'
 import packageConfig from '../config/package-config'
-import {
-  CustomerConfig,
-} from '../customer/customer-config'
+import { CustomerConfig } from '../customer/customer-config'
 import { ZodError } from 'zod'
-import buildAxiosInstance from '../axios/build-axios-instance'
-import { buildAuthRequestInterceptor } from '../axios/auth-request-interceptor'
+import { buildAxiosInstanceWithAuthInterceptor } from '../axios/build-axios-instance'
 import {
   CustomerConfigFromTorqueCustomerApi,
   CustomerConfigFromTorqueCustomerApi_ApiResponseData,
@@ -84,12 +81,9 @@ export function initTorque(
       },
     )
 
-  const axiosInstance = buildAxiosInstance({
+  const axiosInstance = buildAxiosInstanceWithAuthInterceptor({
     apiPublicKey,
   })
-  axiosInstance.interceptors.request.use(
-    buildAuthRequestInterceptor(),
-  )
 
   return axiosInstance.get(CUSTOMER_CONFIGURATION_TORQUE_API_URL)
     .then(response => {

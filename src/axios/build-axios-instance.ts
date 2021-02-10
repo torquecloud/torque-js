@@ -12,9 +12,12 @@ export function buildAxiosInstance(options: AxiosOptions): AxiosInstance {
       'Torque-API-Public-Key': options.apiPublicKey
     },
   })
+  return axiosInstance
+}
+
+export function buildAxiosInstanceWithAuthInterceptor(options: AxiosOptions): AxiosInstance {
+  const axiosInstance = buildAxiosInstance(options);
   const authRequestInterceptor = buildAuthRequestInterceptor()
   axiosInstance.interceptors.request.use(authRequestInterceptor)
   return axiosInstance
 }
-
-export default buildAxiosInstance

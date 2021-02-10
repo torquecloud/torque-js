@@ -1,9 +1,9 @@
 import { AuthenticatedTorqueUser, UnknownTorqueUser, TorqueUser, UserMe_ApiResponseData } from '../torque-user/torque-user'
-import buildAxiosInstance from '../axios/build-axios-instance'
 import packageConfig from '../config/package-config'
 import { makeAuthHeader } from '../axios/auth-request-interceptor'
 import { AxiosOptions } from '../axios/axios-options'
 import { AuthContext } from '../torque-user/auth-context'
+import { buildAxiosInstance } from '../axios/build-axios-instance'
 
 export function fetchUserForAuthToken(
   axiosOptions: AxiosOptions,
