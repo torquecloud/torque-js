@@ -8,13 +8,12 @@ import {
   UserMe_ApiResponseData,
 } from '../torque-user/torque-user'
 import { AuthContextStorage } from '../torque-user/auth-context-storage'
-import buildAxiosInstance from '../axios/build-axios-instance'
 import { AxiosInstance } from 'axios'
-import { buildAuthRequestInterceptor } from '../axios/auth-request-interceptor'
 import { fetchUserForAuthToken } from '../utils/fetch-user-for-auth-token'
 import { AxiosOptions } from '../axios/axios-options'
 import { TorqueError, TorqueErrorType } from './torque-error'
 import { Price } from '../price/price'
+import { buildAxiosInstanceWithAuthInterceptor } from '../axios/build-axios-instance'
 
 
 /**
@@ -40,11 +39,7 @@ export class Torque {
       apiPublicKey: customerConfig.apiPublicKey,
     }
     this.axiosOptions = axiosOptions
-    const axiosInstance = buildAxiosInstance(axiosOptions)
-    axiosInstance.interceptors.request.use(
-      buildAuthRequestInterceptor(),
-    )
-    this.axiosInstance = axiosInstance
+    this.axiosInstance = buildAxiosInstanceWithAuthInterceptor(axiosOptions)
   }
 
   isUsingTestData(): boolean {

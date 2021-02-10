@@ -1,3 +1,3 @@
 export interface AxiosOptions {
-  apiPublicKey: string
+  apiPublicKey: string,
 }
