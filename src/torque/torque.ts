@@ -80,7 +80,7 @@ export class Torque {
   private makeLoginSegmentUrl(): string {
     const queryParams = this.makeUrlQueryParamWithBaseParams()
     const targetUrl =
-      `${packageConfig.TORQUE_USER_FLOWS_WEBAPP_URL}/${this.customerHandle}/projsim__log_in?${queryParams}`
+      `${packageConfig.TORQUE_USER_FLOWS_WEBAPP_URL}/${this.customerHandle}/${this.customerHandle}__log_in?${queryParams}`
     return targetUrl
   }
 
@@ -106,7 +106,7 @@ export class Torque {
     const queryParams =
       this.makeUrlQueryParamWithBaseParams(additionalQueryParamsMap)
     const targetUrl =
-      `${packageConfig.TORQUE_USER_FLOWS_WEBAPP_URL}/${this.customerHandle}/projsim__user_registration?${queryParams}`
+      `${packageConfig.TORQUE_USER_FLOWS_WEBAPP_URL}/${this.customerHandle}/${this.customerHandle}__user_registration?${queryParams}`
     return targetUrl
   }
 
