@@ -98,11 +98,13 @@ export class Torque {
     })
   }
 
-  private makeRegistrationSegmentUrl(priceId: string): string {
+  private makeRegistrationSegmentUrl(priceId?: string): string {
     const additionalQueryParamsMap =
-      new Map<string, string>([
+      priceId
+      ? new Map<string, string>([
         ['price_id', priceId],
-      ])
+       ])
+      : new Map<string, string>()
     const queryParams =
       this.makeUrlQueryParamWithBaseParams(additionalQueryParamsMap)
     const targetUrl =
@@ -111,7 +113,7 @@ export class Torque {
   }
 
   startRegistrationSegment(
-    priceId: string,
+    priceId?: string,
   ): Promise<never | { error: TorqueError }> {
     return new Promise<{ error: TorqueError }>(() => {
       window.location.href = this.makeRegistrationSegmentUrl(priceId)
