@@ -1,6 +1,6 @@
 #!/bin/sh
 if ! test -e src; then
-  echo "It seems like you're not running script from root directroy. Script must be executed from project root directory."
+  echo "It seems like you're not running script from root directory. Script must be executed from project root directory."
   exit 1
 fi
 
@@ -29,5 +29,6 @@ else
   exit 1
 fi
 
-echo "Using local tsc for build. Running 'yarn run tsc' ..."
-yarn run tsc
+echo "Using local tsc for build."
+tsc --build tsconfig.json
+echo "Done"
