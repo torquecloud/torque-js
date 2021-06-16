@@ -1,6 +1,6 @@
 {
   "name": "@torquecloud/torque-js",
-  "version": "1.1.4",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,9 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "echo \"Using build script from ./scripts/build.sh to build.\" && ./scripts/build.sh",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepack": "./scripts/build.sh"
+    "prepack": "./scripts/build-prod.sh"
   },
   "repository": {
     "type": "git",
@@ -18,7 +16,6 @@
   },
   "keywords": [
     "Torque",
-    "authentication",
     "typescript",
     "javascript"
   ],
@@ -29,17 +26,10 @@
   },
   "homepage": "https://github.com/torquecloud/torque-js#readme",
   "devDependencies": {
-    "@types/jest": "^26.0.20",
-    "axios": "^0.21.0",
-    "jest": "^26.6.3",
-    "prettier": "2.2.1",
-    "ts-jest": "^26.4.4",
+    "@types/jest": "^26.0.23",
+    "jest": "^27.0.4",
+    "ts-jest": "^27.0.3",
     "typescript": "^4.1.3"
   },
-  "peerDependencies": {
-    "axios": "^0.21.0"
-  },
-  "dependencies": {
-    "zod": "^2.0.0-beta.30"
-  }
+  "peerDependencies": {}
 }

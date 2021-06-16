@@ -1,8 +1,6 @@
 export enum TorqueErrorType {
   invalid_config = 'invalid_config',
   invalid_parameter = 'invalid_parameter',
-  api_error = 'api_error',
-  unexpected_api_response_data_format = 'unexpected_api_response_data_format',
   unknown_error = 'unknown_error'
 }
 
