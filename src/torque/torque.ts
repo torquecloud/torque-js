@@ -34,8 +34,8 @@ export class Torque {
 
       const xhr = new XMLHttpRequest();
       xhr.open("GET", url, true);
-      xhr.setRequestHeader('Torque-JS-Package-Version', packageConfig.TORQUE_JS_PACKAGE_VERSION);
-      xhr.setRequestHeader('Torque-API-Public-Key', apiPublicKey)
+      // xhr.setRequestHeader('Torque-JS-Package-Version', packageConfig.TORQUE_JS_PACKAGE_VERSION);
+      // xhr.setRequestHeader('Torque-API-Public-Key', apiPublicKey)
       xhr.onload = function() {
         if (this.status >= 200 && this.status < 300) {
           resolve(xhr.response);
