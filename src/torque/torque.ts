@@ -25,12 +25,12 @@ export class Torque {
     return this.apiPublicKey.startsWith('pk_test_')
   }
 
-  httpGetAsync(path: string, instanceId: string): Promise<string> {
+  httpGetAsync(path: string, instanceId: string, queryParams: string): Promise<string> {
     const tenantId = this.tenantId;
     const apiPublicKey = this.apiPublicKey;
 
     return new Promise<string>(function (resolve, reject) {
-      const url = `https://${tenantId}.mytorque.cloud/${instanceId}${path}`
+      const url = `https://${tenantId}.mytorque.cloud/${instanceId}${path}?${queryParams}`
 
       const xhr = new XMLHttpRequest();
       xhr.open("GET", url, true);
